@@ -1,1 +1,1 @@
-# php-skeleton-quick-start
+# rabbit test docs

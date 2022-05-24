@@ -1,0 +1,21 @@
+{
+    "name": "herreracode/php-skeleton-quick-start",
+    "description": "initial project with php docker",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Herreracode\\PhpSkeletonQuickStart\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Gerardo Herrera"
+        }
+    ],
+    "require": {
+        "php" : ">=7.4",
+        "php-amqplib/php-amqplib": ">=3.0"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

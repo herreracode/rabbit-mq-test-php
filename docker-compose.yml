@@ -8,7 +8,6 @@ services:
     env_file:
       - .env
     container_name: rabbit-test
-    restart: unless-stopped
     volumes:
       - ./:/usr/src/myapp
     stdin_open: true
@@ -17,7 +16,6 @@ services:
   db:
     image: mysql
     command: --default-authentication-plugin=mysql_native_password --innodb-use-native-aio=0
-    restart: unless-stopped
     ports:
       - "${MYSQL_PORT}:3306"
     tty: true
@@ -30,7 +28,7 @@ services:
     image: rabbitmq:3.7-management
     tty: true
     ports:
-      - "5672:5672"
+      - "5676:5672"
       - "15672:15672"
 networks: 
   default: 

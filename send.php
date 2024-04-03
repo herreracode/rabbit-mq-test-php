@@ -8,8 +8,20 @@ use PhpAmqpLib\Message\AMQPMessage;
 $connection = new AMQPStreamConnection('rabbit-mq-test-php_rabbitmq_1', 5672, 'guest', 'guest');
 $channel = $connection->channel();
 
+$array = [
+    "secae" => 1
+];
+
+$jsonData = json_encode($array);
+
+$message = new AMQPMessage($jsonData, ['content_type' => 'application/json']);
+
 $msg = new AMQPMessage('Hello Worldasdsadsad!');
-$channel->basic_publish($msg, "saggitarius-a");
+
+while(true){
+    $channel->basic_publish($message, "saggitarius-a");
+}
+
 
 echo " [x] Sent 'Hello World!'\n";
 

@@ -23,15 +23,15 @@ $channel->exchange_declare($exchangeDeadLetter, 'topic',false, true);
 
 foreach($queues as $queue){
 
-    $channel->queue_declare($queue, false, true);
+    $channel->queue_declare($queue, false, true,false,false);
     $channel->queue_bind($queue, $exchangeName);
 
 }
 
 foreach($queues as $queue){
 
-    $channel->queue_declare($queue . ".retry" , false, true, false, true, false, [
-        'x-message-ttl' => ['I', 3000],
+    $channel->queue_declare($queue . ".retry" , false, true, false, false, false, [
+        'x-message-ttl' => ['I', 6000],
         'x-dead-letter-exchange' => ['S', $exchangeName],
     ]);
 

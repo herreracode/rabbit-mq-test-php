@@ -35,7 +35,7 @@ foreach($queues as $queue){
         'x-dead-letter-exchange' => ['S', $exchangeName],
     ]);
 
-    $channel->queue_bind($queue . ".retry", $exchangeTopic);
+    $channel->queue_bind($queue . ".retry", $exchangeTopic, $queue . ".retry");
 
 }
 
@@ -43,6 +43,6 @@ foreach($queues as $queue){
 
     $channel->queue_declare($queue . ".dead_letter" , false, true);
 
-    $channel->queue_bind($queue . ".dead_letter", $exchangeDeadLetter);
+    $channel->queue_bind($queue . ".dead_letter", $exchangeDeadLetter, $queue . ".dead_letter");
 
 }

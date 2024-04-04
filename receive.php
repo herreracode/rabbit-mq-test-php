@@ -11,10 +11,9 @@ $channel = $connection->channel();
 
 echo " [*] Waiting for messages. To exit press CTRL+C\n";
 
-$callback = function ($msg){
+$callback = function ($msg) use ($channel){
 
-    $connection = new AMQPStreamConnection('rabbit-mq-test-php_rabbitmq_1', 5672, 'guest', 'guest');
-    $channel = $connection->channel();
+
 
     echo ' [x] Received ', $msg->body, "\n";
 

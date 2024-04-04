@@ -9,7 +9,7 @@ use PhpAmqpLib\Message\AMQPMessage;
 $retries = 2;
 $connection = new AMQPStreamConnection('rabbit-mq-test-php_rabbitmq_1', 5672, 'guest', 'guest');
 $channel = $connection->channel();
-$routingKeyDeadLetter = "sales.applicant_management.dead_letter";
+$routingKeyDeadLetter = "sales.dead_letter";
 $routingKeyRetry = "sales.applicant_management.retry";
 
 echo " [*] Waiting for messages. To exit press CTRL+C\n";
@@ -35,10 +35,16 @@ $callback = function ($msg) use ($channel, $retries, $routingKeyRetry, $routingK
         $message = new AMQPMessage($jsonData, ['content_type' => 'application/json']);
 
 
-        if($array['header']['retry_number'] < $retries)
+        if ($array['header']['retry_number'] < $retries) {
             $channel->basic_publish($message, "saggitarius-a-retries", $routingKeyRetry);
-        else
-            $channel->basic_publish($message, "saggitarius-a-retries",$routingKeyDeadLetter);
+        } else {
+            $array['header']['queue_who_retried'] = "sales.applicant_management";
+            $jsonData = json_encode($array);
+
+            $message = new AMQPMessage($jsonData, ['content_type' => 'application/json']);
+
+            $channel->basic_publish($message, "saggitarius-a-retries", $routingKeyDeadLetter);
+        }
 
     }
 

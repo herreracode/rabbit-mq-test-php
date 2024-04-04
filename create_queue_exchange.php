@@ -7,6 +7,11 @@ use PhpAmqpLib\Connection\AMQPStreamConnection;
 $exchangeName = "saggitarius-a";
 $exchangeTopic = "saggitarius-a-retries";
 
+$domains = [
+    'sales',
+    'financial'
+];
+
 $queues = [
     'sales.applicant_management',
     'financial.online_payments',
@@ -37,10 +42,10 @@ foreach($queues as $queue){
 
 }
 
-foreach($queues as $queue){
+foreach($domains as $domain){
 
-    $channel->queue_declare($queue . ".dead_letter" , false, true,false,false);
+    $channel->queue_declare($domain . ".dead_letter" , false, true,false,false);
 
-    $channel->queue_bind($queue . ".dead_letter", $exchangeTopic, $queue . ".dead_letter");
+    $channel->queue_bind($domain . ".dead_letter", $exchangeTopic, $domain . ".dead_letter");
 
 }

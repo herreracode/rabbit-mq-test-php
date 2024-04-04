@@ -9,7 +9,10 @@ $connection = new AMQPStreamConnection('rabbit-mq-test-php_rabbitmq_1', 5672, 'g
 $channel = $connection->channel();
 
 $array = [
-    "secae" => 1
+    "header" => [
+        "retry_number" => 0,
+    ],
+    "secae"  => 1,
 ];
 
 $jsonData = json_encode($array);

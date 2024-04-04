@@ -5,8 +5,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 
 $exchangeName = "saggitarius-a";
-$exchangeTopic = "saggitarius-a-retry";
-$exchangeDeadLetter = "saggitarius-a-dead-letter";
+$exchangeTopic = "saggitarius-a-retries";
 
 $queues = [
     'sales.applicant_management',
@@ -19,7 +18,6 @@ $channel = $connection->channel();
 
 $channel->exchange_declare($exchangeName,'fanout',false, true);
 $channel->exchange_declare($exchangeTopic,'topic',false, true);
-$channel->exchange_declare($exchangeDeadLetter, 'topic',false, true);
 
 foreach($queues as $queue){
 
@@ -41,8 +39,8 @@ foreach($queues as $queue){
 
 foreach($queues as $queue){
 
-    $channel->queue_declare($queue . ".dead_letter" , false, true);
+    $channel->queue_declare($queue . ".dead_letter" , false, true,false,false);
 
-    $channel->queue_bind($queue . ".dead_letter", $exchangeDeadLetter, $queue . ".dead_letter");
+    $channel->queue_bind($queue . ".dead_letter", $exchangeTopic, $queue . ".dead_letter");
 
 }

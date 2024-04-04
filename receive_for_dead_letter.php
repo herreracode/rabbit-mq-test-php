@@ -6,12 +6,15 @@ use PhpAmqpLib\Connection\AMQPStreamConnection;
 
 use PhpAmqpLib\Message\AMQPMessage;
 
+$retries = 2;
 $connection = new AMQPStreamConnection('rabbit-mq-test-php_rabbitmq_1', 5672, 'guest', 'guest');
 $channel = $connection->channel();
+$routingKeyDeadLetter = "sales.applicant_management.dead_letter";
+$routingKeyRetry = "sales.applicant_management.retry";
 
 echo " [*] Waiting for messages. To exit press CTRL+C\n";
 
-$callback = function ($msg) use ($channel){
+$callback = function ($msg) use ($channel, $retries, $routingKeyRetry, $routingKeyDeadLetter){
 
 
 
@@ -23,16 +26,19 @@ $callback = function ($msg) use ($channel){
 
     if($array['secae']) {
 
-        $array['secae'] = 0;
-
         var_dump("se cayo");
         var_dump($array);
 
+        $array['header']['retry_number']++;
         $jsonData = json_encode($array);
 
         $message = new AMQPMessage($jsonData, ['content_type' => 'application/json']);
 
-        $channel->basic_publish($message, "saggitarius-a-retries","financial.online_payments.retry");
+
+        if($array['header']['retry_number'] < $retries)
+            $channel->basic_publish($message, "saggitarius-a-retries", $routingKeyRetry);
+        else
+            $channel->basic_publish($message, "saggitarius-a-retries",$routingKeyDeadLetter);
 
     }
 
@@ -42,7 +48,7 @@ $callback = function ($msg) use ($channel){
 };
 
 $channel->basic_consume(
-    'financial.online_payments',
+    'sales.applicant_management',
     '',
     false,
     false,
